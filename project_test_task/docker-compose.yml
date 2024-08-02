@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend_for_test_task/test_api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    restart: always
+    volumes:
+      - ./backend_for_test_task/test_api:/app
+    env_file:
+      - ./backend_for_test_task/.env
+    command: sh -c "python manage.py migrate && python manage.py inituser && python manage.py initnotes && python manage.py runserver 0.0.0.0:8000"
+
+  frontend:
+    build:
+      context: ./test_task
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    volumes:
+      - ./test_task:/app
+    command: sh -c "npm install && npm run dev"
